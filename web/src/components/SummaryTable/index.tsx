@@ -18,15 +18,22 @@ interface Summary {
   amount: number
 }
 
-export function SummaryTables() {
-  const [summary, setSummary] = useState<Summary[]>([])
+interface SummaryTableProps{
+  summary: Summary[]
+  onChangeSummary: (summary: Summary[]) => void
+}
+
+export function SummaryTables({summary, onChangeSummary}: SummaryTableProps) {
 
 
   useEffect(() => {
     api.get('/summary').then((response) => {
-      setSummary(response.data)
+      onChangeSummary(response.data)
     })
   }, [])
+
+  console.log(summary)
+
 
   return (
     <div className="w-full flex ">
@@ -44,18 +51,22 @@ export function SummaryTables() {
         }
       </div>
       <div className="grid grid-rows-7 grid-flow-col gap-3 ">
-        {summary.length > 0 &&
+        { 
           summaryDates.map(date => {
+            let dayInSummary
+            if(summary.length > 0){
+              dayInSummary = summary.find(day => {
+                return dayjs(date).isSame(day.date, 'day')
+              })
 
-            const dayInSummary = summary.find(day => {
-              return dayjs(date).isSame(day.date, 'day')
-            })
+            }
             return (
               <HabitDay
                 key={`${date}`}
                 date={date}
                 amount={dayInSummary?.amount}
                 defaultCompleted={dayInSummary?.completed}
+                onChangeSummary={onChangeSummary}
 
               />
             )

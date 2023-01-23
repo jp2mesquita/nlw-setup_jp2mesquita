@@ -4,9 +4,20 @@ import { Plus, X } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog';
 import { NewHabitForm } from '../NewHabitForm';
 
-export function Header() {
+
+interface Summary {
+  id: string
+  date: string
+  completed: number
+  amount: number
+}
+
+interface SummaryTableProps{
+  onChangeSummary: (summary: Summary[]) => void
+}
 
 
+export function Header({onChangeSummary}: SummaryTableProps) {
 
   return (
     <div className="w-full max-w-3xl mx-auto flex items-center justify-between">
@@ -29,7 +40,9 @@ export function Header() {
             <Dialog.Title className="text-3xl leading-tight font-extrabold">
               Criar Hábito
             </Dialog.Title>
-            <NewHabitForm />
+            <NewHabitForm 
+              onChangeSummary={onChangeSummary}
+            />
           </Dialog.Content>
         </Dialog.Portal>
 

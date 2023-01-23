@@ -5,11 +5,28 @@ import { api } from "../../lib/axios";
 
 const allWeekDays = ["Domingo", "Segunda-feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"]
 
+interface Summary {
+  id: string
+  date: string
+  completed: number
+  amount: number
+}
+
+interface SummaryTableProps{
+
+  onChangeSummary: (summary: Summary[]) => void
+}
 
 
-export function NewHabitForm() {
+export function NewHabitForm({onChangeSummary}: SummaryTableProps) {
   const [title, setTitle] = useState('')
   const [weekDays, setWeekDays] = useState<number[]>([])
+
+  async function fetchSummary(){
+    const newSummary = await api.get('/summary')
+
+    onChangeSummary(newSummary.data)
+  }
 
   async function handleNewHabit(event: FormEvent) {
     event.preventDefault()
@@ -20,6 +37,8 @@ export function NewHabitForm() {
       title,
       weekDays,
     })
+
+    fetchSummary()
 
     setTitle('')
     setWeekDays([])

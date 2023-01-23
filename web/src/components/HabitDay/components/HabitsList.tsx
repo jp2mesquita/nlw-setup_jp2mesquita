@@ -4,9 +4,18 @@ import { Check } from 'phosphor-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../lib/axios';
 
+interface Summary {
+  id: string
+  date: string
+  completed: number
+  amount: number
+}
+
 interface HabitsListProps {
   date: Date
   onCompletedChanged: (completed: number) => void
+  onChangeSummary: (summary: Summary[]) => void
+
 }
 
 interface HabitsInfo {
@@ -18,7 +27,7 @@ interface HabitsInfo {
   completedHabits: string[]
 }
 
-export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
+export function HabitsList({ date, onCompletedChanged, onChangeSummary }: HabitsListProps) {
 
   const [habitsInfo, setHabitsInfo] = useState<HabitsInfo>()
 
@@ -32,8 +41,16 @@ export function HabitsList({ date, onCompletedChanged }: HabitsListProps) {
     })
   }, [])
 
+  async function fetchSummary(){
+    const newSummary = await api.get('/summary')
+
+    onChangeSummary(newSummary.data)
+  }
+
   async function handleToggleHabit(habitId: string) {
     await api.patch(`/habits/${habitId}/toggle`)
+
+    fetchSummary()
 
     const isHabitCompleted = habitsInfo!.completedHabits.includes(habitId)
 

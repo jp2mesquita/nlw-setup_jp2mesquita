@@ -4,17 +4,23 @@ import { ProgressBar } from './components/ProgressBar';
 
 import dayjs from 'dayjs';
 import { HabitsList } from './components/HabitsList';
-import { useEffect, useState } from 'react';
-import { api } from '../../lib/axios';
+import { useState } from 'react';
 
+interface Summary {
+  id: string
+  date: string
+  completed: number
+  amount: number
+}
 
 interface HabitsProps {
   defaultCompleted?: number
   amount?: number
   date: Date
+  onChangeSummary: (summary: Summary[]) => void
 }
 
-export function HabitDay({ defaultCompleted = 0, amount = 0, date }: HabitsProps) {
+export function HabitDay({ defaultCompleted = 0, amount = 0, date, onChangeSummary }: HabitsProps) {
 
   const [completed, setCompleted] = useState(defaultCompleted)
 
@@ -47,7 +53,11 @@ export function HabitDay({ defaultCompleted = 0, amount = 0, date }: HabitsProps
           <span className="font-semibold text-zinc-400 capitalize">{dayOfWeek}</span>
           <span className="mt-1 font-extrabold leading-tight text-3xl ">{dayAndMonth}</span>
           <ProgressBar progress={progressPercentage} />
-          <HabitsList date={date} onCompletedChanged={handleCompletedChanged} />
+          <HabitsList 
+            date={date} 
+            onCompletedChanged={handleCompletedChanged}
+            onChangeSummary={onChangeSummary} 
+          />
 
 
           <Popover.Arrow height={8} width={16} className="fill-zinc-900" />
